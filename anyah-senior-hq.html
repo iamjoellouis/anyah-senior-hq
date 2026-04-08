@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Anyah's Senior Year HQ</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:#FAFBFF;color:#1a1a2e;min-height:100vh;overflow-x:hidden}
+@keyframes confettiFall{0%{transform:translateY(-10vh) translateX(0) rotate(0) scale(1);opacity:1}100%{transform:translateY(110vh) translateX(var(--dr)) rotate(1080deg) scale(.3);opacity:0}}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,107,157,.25)}50%{box-shadow:0 0 0 8px rgba(255,107,157,0)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes floatEmoji{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes floatUp{0%{transform:translateY(100vh) translateX(0) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-10vh) translateX(var(--sway)) rotate(var(--rot));opacity:0}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(var(--bobrot,0deg))}33%{transform:translateY(-12px) rotate(calc(var(--bobrot,0deg) + 5deg))}66%{transform:translateY(-6px) rotate(calc(var(--bobrot,0deg) - 3deg))}}
+.floater{position:fixed;pointer-events:none;z-index:0;animation:floatUp var(--dur) linear var(--delay) infinite;opacity:0;font-size:var(--sz)}
+.bobber{position:fixed;pointer-events:none;z-index:0;animation:bob var(--bdur) ease-in-out infinite;opacity:var(--op);font-size:var(--sz)}
+.wrapper{max-width:860px;margin:0 auto;position:relative}
+.item-card{transition:all .2s;cursor:pointer;position:relative;z-index:1}
+.item-card:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.07)!important}
+.item-card:active{transform:scale(.98)}
+.cat-pill{transition:all .25s;position:relative;z-index:1;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center}
+.cat-pill:hover{transform:translateY(-2px)}
+.filter-btn{transition:all .2s;border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+.note-input{font-family:'DM Sans',sans-serif}
+.note-input:focus{outline:none;border-color:#A78BFA!important}
+.detail-text{white-space:pre-line}
+.confetti-piece{position:fixed;top:0;pointer-events:none;z-index:9999;animation:confettiFall 1.6s ease-out forwards}
+#loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:12px}
+#loading .spinner{font-size:40px;animation:spin 1s linear infinite}
+#loading .text{color:#A78BFA;font-weight:600}
+#app{display:none}
+</style>
+</head>
+<body>
+
+<!-- Floating background flowers -->
+<div class="floater" style="left:5%;--dur:28s;--delay:0s;--sz:26px;--sway:30px;--rot:45deg">🌻</div>
+<div class="floater" style="left:88%;--dur:24s;--delay:4s;--sz:20px;--sway:-25px;--rot:-60deg">🌸</div>
+<div class="floater" style="left:15%;--dur:32s;--delay:8s;--sz:18px;--sway:20px;--rot:30deg">🌷</div>
+<div class="floater" style="left:72%;--dur:26s;--delay:2s;--sz:22px;--sway:-35px;--rot:90deg">🌻</div>
+<div class="floater" style="left:45%;--dur:30s;--delay:12s;--sz:16px;--sway:15px;--rot:-45deg">🌼</div>
+<div class="floater" style="left:92%;--dur:22s;--delay:6s;--sz:24px;--sway:-20px;--rot:75deg">🌸</div>
+<div class="floater" style="left:35%;--dur:34s;--delay:16s;--sz:14px;--sway:25px;--rot:-30deg">✿</div>
+<div class="floater" style="left:60%;--dur:27s;--delay:10s;--sz:20px;--sway:-18px;--rot:60deg">🌻</div>
+<div class="floater" style="left:80%;--dur:31s;--delay:14s;--sz:16px;--sway:22px;--rot:-90deg">🌷</div>
+<div class="floater" style="left:22%;--dur:25s;--delay:20s;--sz:18px;--sway:-28px;--rot:40deg">🌼</div>
+<div class="floater" style="left:50%;--dur:29s;--delay:3s;--sz:14px;--sway:12px;--rot:-55deg">🌸</div>
+<div class="floater" style="left:8%;--dur:33s;--delay:18s;--sz:16px;--sway:32px;--rot:80deg">🌻</div>
+
+<div class="bobber" style="left:2%;top:15%;--sz:32px;--bdur:6s;--op:0.15;--bobrot:-10deg">🌻</div>
+<div class="bobber" style="left:90%;top:35%;--sz:24px;--bdur:7s;--op:0.12;--bobrot:8deg">🌸</div>
+<div class="bobber" style="left:4%;top:55%;--sz:20px;--bdur:8s;--op:0.1;--bobrot:-5deg">🌷</div>
+<div class="bobber" style="left:92%;top:75%;--sz:28px;--bdur:5.5s;--op:0.13;--bobrot:12deg">🌻</div>
+<div class="bobber" style="left:1%;top:90%;--sz:22px;--bdur:7.5s;--op:0.1;--bobrot:-8deg">🌼</div>
+
+<div id="confetti-container"></div>
+
+<div id="loading">
+  <div class="spinner">✨</div>
+  <div class="text">Loading your world...</div>
+</div>
+
+<div id="app" class="wrapper"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+// Firebase config
+firebase.initializeApp({
+  apiKey: "AIzaSyBMf6dTWZogZKLCBMMKMQa4tgYSPNAGj_A",
+  authDomain: "anyah-s-senior-year-hq.firebaseapp.com",
+  projectId: "anyah-s-senior-year-hq",
+  storageBucket: "anyah-s-senior-year-hq.firebasestorage.app",
+  messagingSenderId: "60255112945",
+  appId: "1:60255112945:web:18b80956f8fccc3a142350"
+});
+const db = firebase.firestore();
+
+// ============ DATA ============
+const INITIAL_TASKS = [
+  {
+    id:"prom", category:"Prom Night ✨", emoji:"👗",
+    gradient:"linear-gradient(135deg,#FF6B9D,#FF8E53)", bg:"#FFF0F3", accent:"#FF6B9D",
+    date:"April 25th",
+    items:[
+      {id:"p1",text:"ORDER THE DRESS",detail:"Flower Dress Boutique out of Georgia. $400 + $35 express shipping (3-5 business days). You need to order first thing tomorrow morning before 3 PM to make the shipping cutoff. Express gets it here by ~April 14th, giving enough time for tailoring.",deadline:"2026-04-08",cost:435,urgent:true},
+      {id:"p2",text:"Get Mom's final decision on the dress",detail:"Mom said she wanted to go dress shopping, but time is running out. Need a yes or no ASAP \u2014 if she says no to this dress, you still need to find one with only 17 days until prom.",deadline:"2026-04-08",cost:0,urgent:true},
+      {id:"p3",text:"Get the dress tailored after it arrives",detail:"The shop near Holden said they can do it in about a week if you bring it in. So as soon as the dress arrives (~April 14), bring it in that day.",deadline:"2026-04-16",cost:null},
+      {id:"p4",text:"Book hair appointment \u2014 sew-in",detail:"Ask cousins Lilly or Cassandra if they know a good salon near them that does sew-ins well and at a reasonable price. Your usual spot might not do sew-ins, and they\u2019re hard to reach by phone. Get a referral first, then book for Thursday 4/23 or Friday 4/24.",deadline:"2026-04-14",cost:null},
+      {id:"p5",text:"Book nails \u2014 Vivi is fully booked!",detail:"Ask Lilly or Cassandra if they know a good, affordable nail tech near them. You need mani + pedi done together if possible. Helen\u2019s is the backup plan but not your first choice. Book for prom week (4/20-4/24).",deadline:"2026-04-14",cost:null},
+      {id:"p6",text:"Confirm shoe situation \u2014 do you have open-toe shoes?",detail:"Check your closet. If you don\u2019t have shoes that go with the dress, you need to budget for a pair. Don\u2019t wait until last minute!",deadline:"2026-04-14",cost:null},
+      {id:"p7",text:"Book makeup for prom",detail:"You need someone to do your makeup for prom night! Ask Lilly, Cassandra, or friends who did theirs for recommendations. Book ASAP \u2014 makeup artists get booked up fast before prom season.",deadline:"2026-04-14",cost:null},
+      {id:"p8",text:"Plan prom day logistics",detail:"Where are you getting ready? Who\u2019s in your group? What time are photos? What time is pickup? Make sure you know the full schedule so you\u2019re not scrambling day-of.",deadline:"2026-04-22",cost:0}
+    ]
+  },
+  {
+    id:"seniorszn", category:"Senior Season", emoji:"🎒",
+    gradient:"linear-gradient(135deg,#F472B6,#FB923C)", bg:"#FFF5F0", accent:"#F472B6",
+    date:"April 23rd",
+    items:[
+      {id:"ss1",text:"Find out Senior Skip Day plans",detail:"Nolan and the student reps are coordinating. Where is everyone going \u2014 Six Flags? Great Wolf Lodge? Find out this week so you can plan.",deadline:"2026-04-11",cost:0},
+      {id:"ss2",text:"Lock in a ride for Skip Day",detail:"You can\u2019t drive yourself. Kaz? Khaaliyah? Figure out who\u2019s going and who has space in their car.",deadline:"2026-04-18",cost:0},
+      {id:"ss3",text:"Budget for Skip Day \u2014 April 23rd",detail:"If it\u2019s Six Flags: ~$90 entrance + food + spending money. Budget around $130-150 to be safe. If it\u2019s Great Wolf Lodge or somewhere else, find out costs.",deadline:"2026-04-20",cost:150},
+      {id:"ss4",text:"Skip Day outfit + backpack",detail:"You\u2019ll be out all day \u2014 pick an outfit, pack a backpack with a change of clothes, phone charger, snacks, sunscreen if outdoor. Be comfortable!",deadline:"2026-04-22",cost:0}
+    ]
+  },
+  {
+    id:"photos", category:"Senior Photos", emoji:"📸",
+    gradient:"linear-gradient(135deg,#A78BFA,#818CF8)", bg:"#F3F0FF", accent:"#8B5CF6",
+    date:"Late April / Early May",
+    items:[
+      {id:"ph1",text:"Find a photographer (~$300 budget)",detail:"Dad is asking around at church to find someone who does portrait photography. Budget is ~$300 including editing. If church doesn\u2019t work out, check local photographers on Instagram.",deadline:"2026-04-18",cost:300},
+      {id:"ph2",text:"Pick a photo location",detail:"Aim for late April / early May when spring flowers are blooming. Some great options near Worcester:\n\n\ud83c\udf37 Tower Hill Botanic Garden (Boylston) \u2014 tulips, dogwoods, and garden backdrops in full bloom by early May. $18 admission.\n\n\ud83c\udf38 Green Hill Park \u2014 Worcester\u2019s biggest park (480 acres). Rolling hills, pond, mature trees, wildflowers along trails. Free!\n\n\ud83c\udf3f Elm Park \u2014 classic Worcester spot, flowering trees, bridge over water. Free!\n\n\ud83c\udf3a Cascading Falls / Boynton Park \u2014 waterfall + wooded trails. Dramatic and unique. Free!\n\nPeak bloom for tulips and dogwoods in central MA is usually late April to mid-May.",deadline:"2026-04-20",cost:0},
+      {id:"ph3",text:"Senior photo outfits (2 looks, ~$150 total)",detail:"Look 1: Jeans + white top (casual). Look 2: Nice dress (more formal). Total budget ~$150 for both. Check what you already own before buying anything new!",deadline:"2026-04-25",cost:150},
+      {id:"ph4",text:"Schedule the shoot",detail:"Once you have a photographer and location locked in, book it. Best light for outdoor photos is \u2018golden hour\u2019 \u2014 about an hour before sunset. Target: end of April or first week of May.",deadline:"2026-05-01",cost:0}
+    ]
+  },
+  {
+    id:"grad", category:"Graduation & Party", emoji:"🎓",
+    gradient:"linear-gradient(135deg,#34D399,#3B82F6)", bg:"#F0FFF8", accent:"#10B981",
+    date:"June 5th (ceremony) \u00b7 June 7th (party)",
+    items:[
+      {id:"g1",text:"Check Dean Park availability \u2014 June 7th",detail:"Dad is calling to check if the gazebo area is available for a Sunday afternoon BBQ party. Need to move on this before someone else books it.",deadline:"2026-04-14",cost:null},
+      {id:"g2",text:"Find a restaurant for graduation dinner",detail:"Friday June 5th after the ceremony, the family is going out to dinner together. Need to pick a restaurant and make a reservation \u2014 a place that can handle a bigger group.",deadline:"2026-05-01",cost:null},
+      {id:"g3",text:"Create graduation invites on Paperless Post",detail:"Dad already gave you his Paperless Post login. Create the invite for the June 7th party. Send to family EARLY \u2014 especially family in other states who need to plan travel. Send to local friends closer to the date.",deadline:"2026-04-20",cost:0},
+      {id:"g4",text:"Send invites to out-of-state family",detail:"Relatives who need to travel should get their invites first so they can book flights/hotels and plan to stay Friday through Sunday. Don\u2019t wait!",deadline:"2026-04-25",cost:0},
+      {id:"g5",text:"Coordinate family housing",detail:"Family coming up for Friday ceremony needs a place to stay through Sunday. Who\u2019s staying where? Do we need to book a hotel block?",deadline:"2026-05-15",cost:null},
+      {id:"g6",text:"Plan the catering / food",detail:"BBQ vibes at Dean Park. Figure out: who\u2019s grilling? What are we making vs. ordering? Do we need to rent anything (coolers, extra chairs)?",deadline:"2026-05-15",cost:null},
+      {id:"g7",text:"Create the party playlist",detail:"No DJ \u2014 just a speaker and your playlist. Briana made one for hers, get inspo! Mix of crowd-pleasers and your favorites. Test the speaker setup before the day.",deadline:"2026-05-30",cost:0}
+    ]
+  },
+  {
+    id:"college", category:"College Prep", emoji:"🏡",
+    gradient:"linear-gradient(135deg,#FBBF24,#F97316)", bg:"#FFFBF0", accent:"#F59E0B",
+    date:"MCPHS \u2014 Fall 2026",
+    items:[
+      {id:"c1",text:"Amazon dorm wishlist \u2014 Dad is helping!",detail:"Dad is helping create a shareable Amazon wishlist/registry from your Google Sheet. Once it\u2019s ready, you\u2019ll share the link with family and friends so people can start buying stuff for your dorm.",deadline:"2026-04-12",cost:0,urgent:true},
+      {id:"c2",text:"Find a roommate for Treehouse",detail:"You\u2019ve been using Instagram to connect with incoming students. Vibing with Elisa and a girl from Maryland so far. Keep reaching out and getting to know people \u2014 you want someone you\u2019re comfortable living with, not just anyone.",deadline:"2026-05-15",cost:0},
+      {id:"c3",text:"Email admissions counselor about Treehouse",detail:"You need answers to: When do they start assigning rooms? Is there a deadline to request a specific roommate? Do both people need to put each other down? How does the matching process work? Get these answers so you\u2019re not stressing about something that might have plenty of time.",deadline:"2026-04-10",cost:0},
+      {id:"c4",text:"Remove Apple ID from Bancroft laptop",detail:"You need Dad\u2019s help with this \u2014 the parent settings won\u2019t let you remove it yourself. This has to happen BEFORE you can return the laptop. Once it\u2019s wiped, turn it in on a Friday so you have the weekend to set up your new device.",deadline:"2026-04-11",cost:0},
+      {id:"c5",text:"Return Bancroft laptop",detail:"After the Apple ID is removed, turn it in at school. You need to return this in order to get a new laptop. Aim for a Friday so you have Sat/Sun to set things up.",deadline:"2026-04-18",cost:0}
+    ]
+  },
+  {
+    id:"license", category:"Driver's License", emoji:"🚗",
+    gradient:"linear-gradient(135deg,#38BDF8,#6366F1)", bg:"#F0F7FF", accent:"#3B82F6",
+    date:"Goal: License by July 29th (18th birthday!)",
+    items:[
+      {id:"l0",text:"\u26a0\ufe0f Important: Understand MA requirements",detail:"MA driver\u2019s ed for under-18 includes: 30 hours classroom instruction (in-person or virtual), 12 hours behind-the-wheel with instructor, 6 hours observation, AND 40 hours supervised practice with a parent/guardian. Mom or Dad also has to take a 2-hour parent class. You also need to hold your learner\u2019s permit for 6 months before the road test. Since you turn 18 on July 29th, the timeline is VERY tight for the under-18 path. Alternative: wait until you turn 18, then you only need to pass the road test (no driver\u2019s ed required). But you and Dad agreed the full course is better for safety. Talk to Dad about which path makes the most sense.",deadline:"2026-04-10",cost:0,urgent:true},
+      {id:"l1",text:"Look up driving school dates for May",detail:"Check both in-person and virtual class options. Virtual is probably better since you have co-op in May. Look for 1-week intensive programs (Mon-Fri 8am-3pm) or evening programs. Cost is typically $850-$1,200.",deadline:"2026-04-14",cost:null},
+      {id:"l2",text:"Figure out co-op schedule",detail:"You need to know your co-op days and hours so you can fit driving classes around it. Can you do co-op mornings and virtual driving class afternoons?",deadline:"2026-04-14",cost:0},
+      {id:"l3",text:"Mom or Dad: Complete 2-hour parent class",detail:"MA requires a parent/guardian to take a 2-hour class before you can start any on-road driving lessons. This needs to happen early so it doesn\u2019t hold things up.",deadline:"2026-04-30",cost:0},
+      {id:"l4",text:"Complete 40 hours supervised driving with parent",detail:"This is separate from the driving school lessons. Mom or Dad drives with you for 40 hours total. At 4 hours/week, that\u2019s 10 weeks. Map it out: April through July. Start as soon as possible.",deadline:"2026-07-15",cost:0},
+      {id:"l5",text:"Schedule the license road test",detail:"Target: on or before July 29th \u2014 your 18th birthday! Book early because test slots fill up fast in summer.",deadline:"2026-07-01",cost:null}
+    ]
+  },
+  {
+    id:"job", category:"Summer Job", emoji:"💰",
+    gradient:"linear-gradient(135deg,#10B981,#059669)", bg:"#ECFDF5", accent:"#10B981",
+    date:"TBD",
+    items:[
+      {id:"j1",text:"Talk to Mom & Dad about working this summer",detail:"You mentioned wanting to get a job to help pay for things. Khaaliyah\u2019s mom\u2019s restaurant could be an option. But Mom and Dad need to have that conversation first. Bring it up!",deadline:"2026-04-18",cost:0},
+      {id:"j2",text:"Figure out summer schedule",detail:"Between co-op, driving school, driving practice, Georgia trip, and the road trip with Dad, map out what weeks you\u2019d actually be available to work.",deadline:"2026-05-01",cost:0}
+    ]
+  },
+  {
+    id:"other", category:"This Week", emoji:"⚡",
+    gradient:"linear-gradient(135deg,#E879F9,#A78BFA)", bg:"#FAF0FF", accent:"#A855F7",
+    date:"Right now!",
+    items:[
+      {id:"o1",text:"Saturday hangout with Elisa \u2014 2 PM",detail:"Meeting your potential MCPHS roommate at New Kitchen restaurant! Mom is dropping you off. Need $30 for food.",deadline:"2026-04-11",cost:30},
+      {id:"o2",text:"Call the vet \u2014 book Marley's appointment!",detail:"Call when you get home from school tomorrow. Try to book for April 20th or May 1st (both are school holidays). Spots fill up fast!",deadline:"2026-04-08",cost:null,urgent:true},
+      {id:"o3",text:"Give Khaaliyah her Easter gift \ud83d\udc30",detail:"She missed the Easter egg hunt this weekend. Bring her gift to school tomorrow!",deadline:"2026-04-08",cost:0},
+      {id:"o4",text:"Check Bancroft calendar for days off",detail:"You need a weekday off for Marley\u2019s vet and possibly other appointments. Look at April and May for any professional development days, holidays, or half days.",deadline:"2026-04-08",cost:0}
+    ]
+  }
+];
+
+// ============ STATE ============
+let state = { tasks: null, notes: {}, expanded: null, filter: "all", activeSection: null, showAdd: false };
+
+// ============ FIREBASE SYNC ============
+const DOC_REF = db.collection("app").doc("state");
+
+async function loadFromFirebase() {
+  try {
+    const doc = await DOC_REF.get();
+    if (doc.exists) {
+      const data = doc.data();
+      state.tasks = data.tasks || INITIAL_TASKS;
+      state.notes = data.notes || {};
+    } else {
+      state.tasks = INITIAL_TASKS;
+      state.notes = {};
+      await saveToFirebase();
+    }
+  } catch(e) {
+    console.error("Firebase load error:", e);
+    state.tasks = INITIAL_TASKS;
+    state.notes = {};
+  }
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  render();
+  // Listen for real-time updates
+  DOC_REF.onSnapshot(doc => {
+    if (doc.exists) {
+      const data = doc.data();
+      state.tasks = data.tasks || INITIAL_TASKS;
+      state.notes = data.notes || {};
+      render();
+    }
+  });
+}
+
+async function saveToFirebase() {
+  try {
+    await DOC_REF.set({ tasks: state.tasks, notes: state.notes });
+  } catch(e) { console.error("Firebase save error:", e); }
+}
+
+// ============ HELPERS ============
+function formatDate(dateStr) {
+  const d = new Date(dateStr + "T12:00:00");
+  const now = new Date(); now.setHours(0,0,0,0);
+  const diff = Math.ceil((d - now) / 86400000);
+  const month = d.toLocaleString("en-US",{month:"short"});
+  const day = d.getDate();
+  if(diff<0) return {label:`${month} ${day}`,tagText:"OVERDUE",tagBg:"#FEE2E2",tagColor:"#DC2626"};
+  if(diff===0) return {label:`${month} ${day}`,tagText:"TODAY",tagBg:"#FFE0EC",tagColor:"#E8437F"};
+  if(diff===1) return {label:`${month} ${day}`,tagText:"TOMORROW",tagBg:"#FFF3E0",tagColor:"#E65100"};
+  if(diff<=3) return {label:`${month} ${day}`,tagText:`${diff} days`,tagBg:"#FFF8E1",tagColor:"#F57F17"};
+  if(diff<=7) return {label:`${month} ${day}`,tagText:`${diff} days`,tagBg:"#E8F5E9",tagColor:"#2E7D32"};
+  return {label:`${month} ${day}`,tagText:`${diff}d`,tagBg:"#F3F4F6",tagColor:"#6B7280"};
+}
+
+function escHtml(s) { const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+
+// ============ CONFETTI ============
+const confettiColors=["#FF6B9D","#A78BFA","#34D399","#FBBF24","#38BDF8","#F472B6","#FB923C","#FFD700"];
+function boom() {
+  const c = document.getElementById("confetti-container");
+  for(let i=0;i<28;i++){
+    const el=document.createElement("div");
+    el.className="confetti-piece";
+    const sz=6+Math.random()*10;
+    el.style.cssText=`left:${15+Math.random()*70}%;width:${sz}px;height:${sz}px;background:${confettiColors[i%confettiColors.length]};border-radius:${Math.random()>.5?"50%":"3px"};animation-delay:${Math.random()*.4}s;--dr:${(Math.random()-.5)*90}px`;
+    c.appendChild(el);
+    setTimeout(()=>el.remove(),2000);
+  }
+}
+
+// ============ ACTIONS ============
+function toggleItem(catId, itemId) {
+  const cat = state.tasks.find(c=>c.id===catId);
+  const item = cat?.items.find(i=>i.id===itemId);
+  if(!item) return;
+  const wasDone = item.done;
+  item.done = !item.done;
+  if(!wasDone) boom();
+  saveToFirebase();
+  render();
+}
+
+function toggleExpand(itemId) {
+  state.expanded = state.expanded===itemId ? null : itemId;
+  render();
+}
+
+function setFilter(f) { state.filter=f; render(); }
+function setActiveSection(id) { state.activeSection = state.activeSection===id ? null : id; render(); }
+
+function updateNote(itemId, value) {
+  state.notes[itemId] = value;
+  // Debounced save
+  clearTimeout(updateNote._timer);
+  updateNote._timer = setTimeout(()=>saveToFirebase(), 800);
+}
+
+function toggleAddForm() { state.showAdd=!state.showAdd; render(); }
+
+function addTask() {
+  const cat=document.getElementById("add-cat").value;
+  const text=document.getElementById("add-text").value.trim();
+  const detail=document.getElementById("add-detail").value.trim();
+  const deadline=document.getElementById("add-deadline").value;
+  if(!cat||!text) return;
+  const c=state.tasks.find(t=>t.id===cat);
+  if(!c) return;
+  c.items.push({id:`x-${Date.now()}`,text,detail,deadline:deadline||null,cost:null,done:false});
+  state.showAdd=false;
+  saveToFirebase();
+  render();
+}
+
+function resetAll() {
+  if(!confirm("Start completely fresh? This clears all progress and notes.")) return;
+  state.tasks=JSON.parse(JSON.stringify(INITIAL_TASKS));
+  state.notes={};
+  saveToFirebase();
+  render();
+}
+
+// ============ RENDER ============
+function render() {
+  const tasks = state.tasks;
+  if(!tasks) return;
+
+  const total=tasks.reduce((a,c)=>a+c.items.length,0);
+  const done=tasks.reduce((a,c)=>a+c.items.filter(i=>i.done).length,0);
+  const pct=total?Math.round((done/total)*100):0;
+  const budget=tasks.reduce((a,c)=>a+c.items.filter(i=>!i.done).reduce((b,i)=>b+(i.cost||0),0),0);
+  const tbdCount=tasks.reduce((a,c)=>a+c.items.filter(i=>!i.done&&i.cost===null).length,0);
+  const urgentCount=tasks.reduce((a,c)=>a+c.items.filter(i=>i.urgent&&!i.done).length,0);
+
+  const headlines=[
+    [0,"Let's get this show on the road!"],[20,"Just getting started \u2014 you got this!"],[40,"Making moves! Keep checking things off!"],
+    [60,"Halfway there, queen! \ud83d\udc51"],[80,"On a roll! The finish line is in sight!"],[100,"Almost done \u2014 finish strong! \ud83d\udcaa"],[101,"YOU DID IT ALL! \ud83c\udf89\ud83c\udf89\ud83c\udf89"]
+  ];
+  let hl=headlines[0][1]; for(const[t,m] of headlines){ if(pct>=t) hl=m; }
+  if(pct===100) hl=headlines[headlines.length-1][1];
+
+  let filtered=tasks;
+  if(state.filter==="done") filtered=tasks.map(c=>({...c,items:c.items.filter(i=>i.done)})).filter(c=>c.items.length);
+  else if(state.filter==="todo") filtered=tasks.map(c=>({...c,items:c.items.filter(i=>!i.done)})).filter(c=>c.items.length);
+  if(state.activeSection) filtered=filtered.filter(c=>c.id===state.activeSection);
+
+  let html = `
+  <!-- HERO -->
+  <div style="background:linear-gradient(135deg,#FF6B9D 0%,#A78BFA 30%,#38BDF8 60%,#34D399 100%);background-size:200% 200%;animation:gradientShift 8s ease infinite;padding:44px 24px 36px;border-radius:0 0 32px 32px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-30px;right:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.1)"></div>
+    <div style="position:absolute;bottom:-20px;left:-10px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08)"></div>
+    <div style="position:absolute;top:20px;left:30px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+    <div style="position:relative;z-index:1">
+      <div style="font-size:12px;letter-spacing:3px;color:rgba(255,255,255,.8);text-transform:uppercase;font-weight:600;margin-bottom:6px">Class of 2026 \u00b7 Bancroft</div>
+      <h1 style="font-family:'Outfit',sans-serif;font-size:36px;font-weight:900;color:#fff;line-height:1.05;margin-bottom:6px">Anyah's Senior Year HQ</h1>
+      <p style="color:rgba(255,255,255,.85);font-size:14px;font-weight:500">${escHtml(hl)}</p>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:22px;position:relative;z-index:1">
+      ${[{v:`${pct}%`,l:"Complete"},{v:total-done,l:"To Do"},{v:`$${budget}`,l:"Known Costs"},{v:tbdCount,l:"TBD $$$"}].map(s=>`
+        <div style="flex:1;background:rgba(255,255,255,.2);backdrop-filter:blur(10px);border-radius:16px;padding:12px 6px;text-align:center">
+          <div style="font-size:20px;font-weight:900;color:#fff;font-family:'Outfit',sans-serif">${s.v}</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.75);font-weight:600;line-height:1.2">${s.l}</div>
+        </div>`).join("")}
+    </div>
+    <div style="margin-top:14px;background:rgba(255,255,255,.2);border-radius:100px;height:8px;overflow:hidden;position:relative;z-index:1">
+      <div style="height:100%;border-radius:100px;background:#fff;width:${pct}%;transition:width .5s ease"></div>
+    </div>
+  </div>
+
+  <div style="padding:0 16px">`;
+
+  // Urgent banner
+  if(urgentCount>0){
+    html+=`<div style="margin-top:16px;padding:14px 18px;border-radius:16px;background:linear-gradient(135deg,#FFF0F3,#FFE4EC);border:1.5px solid #FFCCD5;display:flex;align-items:center;gap:12px;animation:pulseGlow 2s infinite">
+      <span style="font-size:24px;animation:floatEmoji 2s ease-in-out infinite">\ud83d\udea8</span>
+      <div><div style="font-weight:700;font-size:14px;color:#BE123C">${urgentCount} urgent item${urgentCount>1?"s":""} need your attention!</div>
+      <div style="font-size:12px;color:#E11D48;margin-top:2px">Handle these before anything else</div></div></div>`;
+  }
+
+  // Category pills
+  html+=`<div style="display:flex;gap:8px;overflow-x:auto;padding:16px 0 12px;-webkit-overflow-scrolling:touch">
+    <button class="cat-pill" onclick="setActiveSection(null)" style="min-width:56px;padding:8px 14px;border-radius:14px;background:${state.activeSection===null?"linear-gradient(135deg,#A78BFA,#818CF8)":"#fff"};box-shadow:${state.activeSection===null?"0 4px 16px rgba(167,139,250,.3)":"0 1px 6px rgba(0,0,0,.05)"}">
+      <div style="font-size:11px;font-weight:700;color:${state.activeSection===null?"#fff":"#555"}">All</div>
+    </button>`;
+  tasks.forEach(cat=>{
+    const d=cat.items.filter(i=>i.done).length, t=cat.items.length, a=state.activeSection===cat.id;
+    html+=`<button class="cat-pill" onclick="setActiveSection('${cat.id}')" style="min-width:80px;padding:8px 12px;border-radius:14px;background:${a?cat.gradient:"#fff"};box-shadow:${a?`0 4px 16px ${cat.accent}33`:"0 1px 6px rgba(0,0,0,.05)"}">
+      <div style="font-size:18px;margin-bottom:1px">${cat.emoji}</div>
+      <div style="font-size:9px;font-weight:700;color:${a?"#fff":"#555"};line-height:1.2">${escHtml(cat.category.replace(/\s*✨$/,""))}</div>
+      <div style="font-size:9px;font-weight:600;margin-top:2px;color:${a?"rgba(255,255,255,.8)":"#CCC"}">${d}/${t}</div>
+    </button>`;
+  });
+  html+=`</div>`;
+
+  // Filters
+  html+=`<div style="display:flex;gap:6px;padding-bottom:12px">`;
+  [["all","All"],["todo","To Do"],["done","Done \u2713"]].forEach(([k,l])=>{
+    html+=`<button class="filter-btn" onclick="setFilter('${k}')" style="padding:6px 16px;border-radius:100px;background:${state.filter===k?"#1E293B":"#F1F5F9"};color:${state.filter===k?"#fff":"#94A3B8"};font-size:12px;font-weight:600">${l}</button>`;
+  });
+  html+=`<button class="filter-btn" onclick="resetAll()" style="padding:6px 12px;border-radius:100px;background:transparent;color:#D1D5DB;font-size:11px;margin-left:auto">\u21ba Reset</button></div>`;
+
+  // Sections
+  filtered.forEach((cat,ci)=>{
+    html+=`<div style="margin-bottom:28px;animation:slideUp .3s ease ${ci*.04}s both">`;
+    // Section header
+    html+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:10px 14px;background:${cat.bg};border-radius:18px">
+      <div style="width:42px;height:42px;border-radius:14px;background:${cat.gradient};display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 12px ${cat.accent}22;flex-shrink:0">${cat.emoji}</div>
+      <div style="flex:1;min-width:0"><h2 style="font-size:17px;font-weight:800;font-family:'Outfit',sans-serif;color:#1a1a2e">${escHtml(cat.category)}</h2>
+      ${cat.date?`<div style="font-size:11px;color:#888;font-weight:500;margin-top:1px">${escHtml(cat.date)}</div>`:""}</div>
+      <div style="font-size:12px;font-weight:700;color:${cat.accent};background:#fff;padding:4px 12px;border-radius:100px;flex-shrink:0">${cat.items.filter(i=>i.done).length}/${cat.items.length}</div>
+    </div>`;
+
+    // Items
+    cat.items.forEach(item=>{
+      const exp=state.expanded===item.id;
+      const di=item.deadline?formatDate(item.deadline):null;
+      const cost=item.cost===null?"\ud83d\udcb2TBD":item.cost===0?null:`$${item.cost}`;
+      html+=`<div class="item-card" onclick="toggleExpand('${item.id}')" style="background:${item.done?"#F0FFF4":"#fff"};border-radius:18px;padding:14px 16px;margin-bottom:8px;border:1.5px solid ${item.done?"#BBF7D0":item.urgent&&!item.done?"#FFCCD5":"#F0F0F5"};${item.urgent&&!item.done?"animation:pulseGlow 2.5s infinite;":""};box-shadow:${item.done?"none":"0 1px 4px rgba(0,0,0,.03)"}">
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <button onclick="event.stopPropagation();toggleItem('${cat.id}','${item.id}')" style="width:26px;height:26px;min-width:26px;border-radius:9px;border:2.5px solid ${item.done?"#34D399":cat.accent+"55"};background:${item.done?"linear-gradient(135deg,#34D399,#10B981)":"#fff"};cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .2s;box-shadow:${item.done?"0 2px 8px rgba(52,211,153,.3)":"none"}">
+            ${item.done?`<span style="color:#fff;font-size:13px;font-weight:800">\u2713</span>`:""}
+          </button>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:600;line-height:1.4;text-decoration:${item.done?"line-through":"none"};color:${item.done?"#94A3B8":"#1E293B"}">
+              ${escHtml(item.text)}
+              ${item.urgent&&!item.done?`<span style="display:inline-block;margin-left:8px;font-size:10px;background:linear-gradient(135deg,#FF6B9D,#FF8E53);color:#fff;padding:2px 10px;border-radius:100px;font-weight:700;vertical-align:middle">NOW!</span>`:""}
+            </div>
+            <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+              ${di?`<span style="font-size:11px;padding:2px 10px;border-radius:8px;font-weight:600;background:${di.tagBg};color:${di.tagColor}">${di.label} \u00b7 ${di.tagText}</span>`:""}
+              ${cost?`<span style="font-size:11px;padding:2px 10px;border-radius:8px;background:${cost==="\ud83d\udcb2TBD"?"#FFF8E1":"#F8FAFC"};color:${cost==="\ud83d\udcb2TBD"?"#D97706":"#64748B"};font-weight:600;border:1px solid ${cost==="\ud83d\udcb2TBD"?"#FDE68A":"#E2E8F0"}">${cost}</span>`:""}
+            </div>
+          </div>
+          <span style="font-size:14px;color:#CBD5E1;transition:transform .2s;margin-top:4px;transform:${exp?"rotate(180deg)":"rotate(0)"};display:inline-block">\u25be</span>
+        </div>`;
+
+      if(exp){
+        html+=`<div style="margin-top:12px;padding-left:38px;animation:slideUp .15s ease" onclick="event.stopPropagation()">`;
+        if(item.detail){
+          html+=`<p class="detail-text" style="font-size:13px;color:#64748B;line-height:1.6;margin-bottom:10px;background:${cat.bg};padding:12px 14px;border-radius:12px;border-left:3px solid ${cat.accent}">${escHtml(item.detail)}</p>`;
+        }
+        html+=`<textarea class="note-input" placeholder="Add a personal note..." oninput="updateNote('${item.id}',this.value)" style="width:100%;min-height:52px;padding:10px;border-radius:12px;border:1.5px solid #E2E8F0;background:#FAFBFF;color:#334155;font-size:13px;resize:vertical">${escHtml(state.notes[item.id]||"")}</textarea>`;
+        html+=`</div>`;
+      }
+      html+=`</div>`;
+    });
+    html+=`</div>`;
+  });
+
+  // Add task
+  if(state.showAdd){
+    html+=`<div style="background:#fff;border-radius:24px;padding:22px;margin-bottom:24px;border:1.5px solid #E2E8F0;box-shadow:0 4px 16px rgba(0,0,0,.06);animation:slideUp .2s ease">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h3 style="font-size:16px;font-weight:800;font-family:'Outfit',sans-serif">Add a Task \u270d\ufe0f</h3>
+        <button onclick="toggleAddForm()" style="background:#F1F5F9;border:none;color:#94A3B8;font-size:14px;width:28px;height:28px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center">\u2715</button>
+      </div>
+      <select id="add-cat" style="width:100%;padding:11px;border-radius:14px;margin-bottom:8px;background:#F8FAFC;border:1.5px solid #E2E8F0;color:#334155;font-size:13px;font-family:'DM Sans',sans-serif">
+        <option value="">Pick a category...</option>
+        ${tasks.map(c=>`<option value="${c.id}">${c.emoji} ${escHtml(c.category)}</option>`).join("")}
+      </select>
+      <input id="add-text" placeholder="What needs to get done?" style="width:100%;padding:11px;border-radius:14px;margin-bottom:8px;background:#F8FAFC;border:1.5px solid #E2E8F0;color:#334155;font-size:13px;font-family:'DM Sans',sans-serif">
+      <input id="add-detail" placeholder="Details (optional)" style="width:100%;padding:11px;border-radius:14px;margin-bottom:8px;background:#F8FAFC;border:1.5px solid #E2E8F0;color:#334155;font-size:13px;font-family:'DM Sans',sans-serif">
+      <input id="add-deadline" type="date" style="width:100%;padding:11px;border-radius:14px;margin-bottom:14px;background:#F8FAFC;border:1.5px solid #E2E8F0;color:#334155;font-size:13px;font-family:'DM Sans',sans-serif">
+      <button onclick="addTask()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#A78BFA,#818CF8);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 16px rgba(167,139,250,.3)">Add It! \u2728</button>
+    </div>`;
+  } else {
+    html+=`<button onclick="toggleAddForm()" style="width:100%;padding:14px;border-radius:18px;border:2px dashed #E2E8F0;background:#fff;color:#94A3B8;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:24px;font-family:'DM Sans',sans-serif">+ Add a task</button>`;
+  }
+
+  // Footer
+  html+=`<div style="text-align:center;padding:20px 0 48px">
+    <div style="font-size:13px;color:#CBD5E1;font-weight:500">Built with love by Dad \ud83d\udcaa</div>
+    <div style="font-size:11px;color:#E2E8F0;margin-top:4px">You got this, future NP! \ud83e\ude7a</div>
+  </div></div>`;
+
+  document.getElementById("app").innerHTML = html;
+}
+
+// ============ INIT ============
+loadFromFirebase();
+</script>
+</body>
+</html>
