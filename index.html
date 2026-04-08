@@ -292,10 +292,12 @@ function addTask() {
   const text=document.getElementById("add-text").value.trim();
   const detail=document.getElementById("add-detail").value.trim();
   const deadline=document.getElementById("add-deadline").value;
+  const costVal=document.getElementById("add-cost").value.trim();
+  const cost=costVal===""?null:Number(costVal)||0;
   if(!cat||!text) return;
   const c=state.tasks.find(t=>t.id===cat);
   if(!c) return;
-  c.items.push({id:`x-${Date.now()}`,text,detail,deadline:deadline||null,cost:null,done:false});
+  c.items.push({id:`x-${Date.now()}`,text,detail,deadline:deadline||null,cost,done:false});
   state.showAdd=false;
   saveToFirebase();
   render();
@@ -448,7 +450,10 @@ function render() {
       </select>
       <input id="add-text" placeholder="What needs to get done?" style="width:100%;padding:11px;border-radius:14px;margin-bottom:8px;background:#F8FAFC;border:1.5px solid #E2E8F0;color:#334155;font-size:13px;font-family:'DM Sans',sans-serif">
       <input id="add-detail" placeholder="Details (optional)" style="width:100%;padding:11px;border-radius:14px;margin-bottom:8px;background:#F8FAFC;border:1.5px solid #E2E8F0;color:#334155;font-size:13px;font-family:'DM Sans',sans-serif">
-      <input id="add-deadline" type="date" style="width:100%;padding:11px;border-radius:14px;margin-bottom:14px;background:#F8FAFC;border:1.5px solid #E2E8F0;color:#334155;font-size:13px;font-family:'DM Sans',sans-serif">
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <input id="add-cost" type="number" min="0" placeholder="Cost $ (optional)" style="flex:1;padding:11px;border-radius:14px;background:#F8FAFC;border:1.5px solid #E2E8F0;color:#334155;font-size:13px;font-family:'DM Sans',sans-serif">
+        <input id="add-deadline" type="date" style="flex:1;padding:11px;border-radius:14px;background:#F8FAFC;border:1.5px solid #E2E8F0;color:#334155;font-size:13px;font-family:'DM Sans',sans-serif">
+      </div>
       <button onclick="addTask()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#A78BFA,#818CF8);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 16px rgba(167,139,250,.3)">Add It! \u2728</button>
     </div>`;
   } else {
